@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  itineraries Itinerary[]
+}
+
+model Itinerary {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  name            String
+  duration        Int
+  budget          String
+  interests       String[]
+  currentCity     String?
+  destinationCity String?
+  places          Place[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Place {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  itineraryId String
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  day         Int
+  order       Int
+}
+
